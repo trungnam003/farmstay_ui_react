@@ -1,8 +1,6 @@
-# Getting Started with Create React App
+# Đồ Án Tốt Nghiệp - React WebApp Farmstay
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
-
-## Available Scripts
+## Available Scripts React
 
 In the project directory, you can run:
 

@@ -4,9 +4,19 @@
 
 :root {
     --primary-color: #003e29;
+    --primary-color-btn: #008040;
+
+    --default-layout-header-height: 60px;
+    --default-layout-width: 1150px;
+    --black-color: #000;
+    --white-color: #fff;
+
+    --text-color: #333333;
 }
 
 * {
+    margin: 0;
+    padding: 0;
     box-sizing: border-box;
 }
 
@@ -19,4 +29,15 @@ body {
     font-size: 1.6rem;
     line-height: 1.5;
     text-rendering: optimizeSpeed;
+}
+button,
+input,
+[tabindex] {
+    outline: none;
+    border: none;
+}
+
+a[href] {
+    color: var(--text-color);
+    text-decoration: none;
 }

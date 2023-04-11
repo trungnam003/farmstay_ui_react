@@ -1,14 +1,30 @@
-import { HeaderOnlyLayout } from '~/components/Layouts';
-import Following from '~/pages/Following';
-import Home from '~/pages/Home';
-import Upload from '~/pages/Upload';
+import config from '~/config';
+import React from 'react';
+
+const Home = React.lazy(() => import('~/features/Home'));
+const Auth = React.lazy(() => import('~/features/Auth'));
+const User = React.lazy(() => import('~/features/User'));
+
+// import Home from '~/features/Home';
+// import Auth from '~/features/Auth';
+
 //Layout
 
 // Route không cần đăng nhập
 const publicRoutes = [
-    { path: '/', component: Home },
-    { path: '/following', component: Following, layout: null },
-    { path: '/upload', component: Upload, layout: HeaderOnlyLayout },
+    // { path: config.routes.home, component: Home, layout: DefaultLayout },
+    { path: config.routes.home.path, component: Home },
+    { path: config.routes.auth.path, component: Auth },
+    { path: config.routes.user.path, component: User },
+
+    // {
+    //     path: config.routes.login,
+    //     component: Login,
+    //     layout: EmptyLayout,
+    // },
+    // { path: '/following', component: Following, layout: DefaultLayout },
+    // { path: '/:nickname', component: Following, layout: HeaderOnlyLayout },
+    // { path: '/upload', component: Upload, layout: HeaderOnlyLayout },
 ];
 
 // Route cần đăng nhập

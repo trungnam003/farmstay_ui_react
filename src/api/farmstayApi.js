@@ -7,19 +7,19 @@ const farmstayApi = {
     },
     getDetailFarmstay: (token, farmstayUUID) => {
         const url = `/farmstays/${farmstayUUID}`;
-        return axiosClient.get(url, { headers: { authenticate_jwt: token } });
+        return axiosClient.get(url, { headers: { 'authenticate-jwt': token } });
     },
     createPaymentURL: ({ token, farmstayUUID, bankCode = '', language = 'vi', returnURL }) => {
         const url = `/farmstays/${farmstayUUID}/create_deposit_payment_url`;
         return axiosClient.post(
             url,
             { bank_code: bankCode, language, return_url: returnURL },
-            { headers: { authenticate_jwt: token } },
+            { headers: { 'authenticate-jwt': token } },
         );
     },
     checkDepositPayment: ({ token, farmstayUUID, body }) => {
         const url = `/farmstays/${farmstayUUID}/check_deposit_payment`;
-        return axiosClient.post(url, body, { headers: { authenticate_jwt: token } });
+        return axiosClient.post(url, body, { headers: { 'authenticate-jwt': token } });
     },
 };
 

@@ -14,7 +14,7 @@ const authApi = {
         const url = '/auth/logout';
         const auth = JSON.parse(localStorage.getItem(config.localStorageKey.auth));
         const { token } = auth;
-        return axiosClient.get(url, { headers: { authenticate_jwt: token } });
+        return axiosClient.get(url, { headers: { 'authenticate-jwt': token } });
     },
 };
 

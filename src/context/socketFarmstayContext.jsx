@@ -7,7 +7,7 @@ const { token } = JSON.parse(localStorage.getItem(config.localStorageKey.auth));
 
 export const socket = socketio.connect(config.socketURL + '/farmstay', {
     extraHeaders: {
-        authenticate_jwt: token,
+        'authenticate-jwt': token,
     },
     autoConnect: false,
     reconnection: false,

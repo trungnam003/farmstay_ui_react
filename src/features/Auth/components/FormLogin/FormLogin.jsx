@@ -57,7 +57,7 @@ function FormLogin() {
         const handleApiLogin = async () => {
             try {
                 const res = await authApi.login({ login, password });
-                const { authenticate_jwt: token, token_expires_in: exp } = res;
+                const { 'authenticate-jwt': token, token_expires_in: exp } = res;
 
                 const action = loginAction({ token, exp });
                 localStorage.setItem(config.localStorageKey.auth, JSON.stringify({ token, exp }));

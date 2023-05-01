@@ -26,41 +26,51 @@ function VisualizationGroup({ field, className, ...props }) {
     const socket = useContext(SocketFarmstayContext);
 
     useEffect(() => {
+        const handleSocketData = (res) => {
+            const { value, danger } = res;
+            Object.assign(res, { value: Math.floor(value) });
+            if (danger) {
+                toast.error(`Cảnh báo: ${field.alias_field_name} ${value}${field.unit_symbol}`, {
+                    position: 'top-right',
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: 'light',
+                });
+            }
+
+            setData((prev) => {
+                if (prev.length >= 30) {
+                    return [...prev.slice(-29), res];
+                } else {
+                    return [...prev, res];
+                }
+            });
+            setChecked(!!value);
+        };
         if (auth.token) {
             userApi
                 .getLatestDataEquipments({ token: auth.token, field: field.field_name })
                 .then((res) => {
-                    socket.on(field.field_name, (res) => {
-                        const { value, danger } = res;
-                        if (danger) {
-                            toast.error(`Cảnh báo: ${field.alias_field_name} ${value}${field.unit_symbol}`, {
-                                position: 'top-right',
-                                autoClose: 5000,
-                                hideProgressBar: false,
-                                closeOnClick: true,
-                                pauseOnHover: true,
-                                draggable: true,
-                                progress: undefined,
-                                theme: 'light',
-                            });
-                        }
-                        setData((prev) => {
-                            if (prev.length >= 30) {
-                                return [...prev.slice(-29), res];
-                            } else {
-                                return [...prev, res];
-                            }
-                        });
-                        setChecked(!!value);
-                    });
+                    socket.on(field.field_name, handleSocketData);
                     setData((prev) => {
                         return [...res.data];
                     });
+                    if (Array.isArray(res.data) && res.data.length > 0) {
+                        setChecked(!!res.data[res.data.length - 1].value);
+                    }
                 })
                 .catch((err) => {
                     console.log(err);
                 });
         }
+
+        return () => {
+            socket.off(field.field_name, handleSocketData);
+        };
     }, [field.field_name, socket, auth.token, field.alias_field_name, field.unit_symbol]);
     const handleChange = (nextChecked) => {
         setChecked(nextChecked);

@@ -10,10 +10,12 @@ import { Link, useNavigate } from 'react-router-dom';
 import styles from './FormLogin.module.scss';
 import { Formik, Form as FormFormik, FastField } from 'formik';
 import InputField from '~/customs/fields/InputField';
-import { authApi, userApi } from '~/api';
+import { authApi } from '~/api';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { login as loginAction } from '~/redux/auth/authSlice';
+import { setUser } from '~/redux/user/userSlice';
+
 import config from '~/config';
 
 const cx = classNames.bind(styles);
@@ -35,8 +37,19 @@ function FormLogin() {
     };
 
     const validationSchema = Yup.object().shape({
-        login: Yup.string().required('Trường này bắt buộc'),
-        password: Yup.string().required('Trường này bắt buộc'),
+        login: Yup.string()
+            .test('email-or-username', 'Username hoặc email không hợp lệ', (value) => {
+                const isEmail = Yup.string().email().isValidSync(value);
+                const isUsername = Yup.string()
+                    .matches(/^[A-Za-z][A-Za-z0-9]*(?=[a-zA-Z0-9._]{3,120}$)(?!.*[_.]{2})[^_.].*[^_.]$/i)
+                    .isValidSync(value);
+                return isEmail || isUsername;
+            })
+            .required('Trường này bắt buộc'),
+        password: Yup.string()
+            .min('3', 'Mật khẩu tối thiểu 3 ký tự')
+            .max('256', 'Mật khẩu tối đa 256 ký tự')
+            .required('Trường này bắt buộc'),
     });
 
     const handleSubmitLogin = (values) => {
@@ -45,15 +58,15 @@ function FormLogin() {
             try {
                 const res = await authApi.login({ login, password });
                 const { authenticate_jwt: token, token_expires_in: exp } = res;
+
                 const action = loginAction({ token, exp });
                 localStorage.setItem(config.localStorageKey.auth, JSON.stringify({ token, exp }));
                 dispatch(action);
-                const user = await userApi.getInfoUser({ token });
-                const {
-                    data,
-                    data: { is_active },
-                } = user;
-                localStorage.setItem(config.localStorageKey.user, JSON.stringify(data));
+                const { data: user } = res;
+                const { is_active } = user;
+                localStorage.setItem(config.localStorageKey.user, JSON.stringify(user));
+                const userAction = setUser(user);
+                dispatch(userAction);
                 if (is_active) {
                     navigate(config.routes.home.path);
                 } else {
@@ -61,7 +74,7 @@ function FormLogin() {
                 }
             } catch (error) {
                 const { response } = error;
-                // console.log(response.data);
+                console.log(response.data);
                 setShowLoginFailed(response.data.message);
             }
         };

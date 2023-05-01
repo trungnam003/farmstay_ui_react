@@ -15,11 +15,23 @@ const routes = {
     home: {
         path: '/',
     },
+    farmstays: {
+        path: '/farmstays',
+        child: {
+            detail: ':farmstay_uuid',
+        },
+    },
     user: {
         path: '/user',
         child: {
             active: 'active',
             dashboard: 'farmstay/dashboard',
+        },
+    },
+    employee: {
+        path: '/employee',
+        child: {
+            chat: 'chat',
         },
     },
 };

@@ -6,7 +6,7 @@ import ActiveUser from './pages/ActiveUser';
 import FarmstayDashboard from './pages/FarmstayDashboard';
 import UserInfo from './pages/UserInfo';
 
-function Auth() {
+function User() {
     return (
         <>
             <Routes>
@@ -48,4 +48,4 @@ function Auth() {
     );
 }
 
-export default Auth;
+export default User;

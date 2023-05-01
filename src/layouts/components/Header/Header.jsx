@@ -7,6 +7,7 @@ import {
     faSignOut,
     // faMessage,
     faUser,
+    faUsers,
 } from '@fortawesome/free-solid-svg-icons';
 import classNames from 'classnames/bind';
 import { Link, useNavigate } from 'react-router-dom';
@@ -25,6 +26,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { login as loginAction, logout as logoutAction } from '~/redux/auth/authSlice';
 import { authApi } from '~/api';
 import { useEffect } from 'react';
+import { resetUser, setUser } from '~/redux/user/userSlice';
 
 const cx = classNames.bind(styles);
 
@@ -44,6 +46,7 @@ const MENU_ITEMS = [
 
 function Header() {
     const auth = useSelector((state) => state.auth);
+    const user = useSelector((state) => state.user);
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -54,6 +57,13 @@ function Header() {
                 const { token, exp } = jwt;
                 const action = loginAction({ token, exp });
                 dispatch(action);
+            }
+        }
+        if (!user.username) {
+            const userStore = JSON.parse(localStorage.getItem(config.localStorageKey.user));
+            if (userStore && userStore.username) {
+                const actionSetUser = setUser(userStore);
+                dispatch(actionSetUser);
             }
         }
     });
@@ -86,7 +96,9 @@ function Header() {
                         localStorage.removeItem(config.localStorageKey.user);
 
                         const action = logoutAction();
+                        const actionResetUser = resetUser();
                         dispatch(action);
+                        dispatch(actionResetUser);
                         navigate('/');
                     })
                     .catch((err) => {
@@ -100,6 +112,32 @@ function Header() {
             separate: true,
         },
     ];
+
+    const renderNavIcon = () => {
+        if (user) {
+            if (user.user_type === 'customer') {
+                return (
+                    <Tippy content="Farmstay của tôi" placement="bottom" animation="shift-away" duration={[150, 0]}>
+                        <Link to="/user/farmstay/dashboard">
+                            <button className={cx('action-btn')}>
+                                <FontAwesomeIcon icon={faHouseSignal} />
+                            </button>
+                        </Link>
+                    </Tippy>
+                );
+            } else if (user.user_type === 'employee') {
+                return (
+                    <Tippy content="Nhân viên" placement="bottom" animation="shift-away" duration={[150, 0]}>
+                        <Link to="/employee">
+                            <button className={cx('action-btn')}>
+                                <FontAwesomeIcon icon={faUsers} />
+                            </button>
+                        </Link>
+                    </Tippy>
+                );
+            }
+        }
+    };
     return (
         <header className={cx('wrapper')}>
             <div className={cx('inner')}>
@@ -115,18 +153,7 @@ function Header() {
                 <div className={cx('action')}>
                     {currentUser ? (
                         <>
-                            <Tippy
-                                content="Farmstay của tôi"
-                                placement="bottom"
-                                animation="shift-away"
-                                duration={[150, 0]}
-                            >
-                                <Link to="/user/farmstay/dashboard">
-                                    <button className={cx('action-btn')}>
-                                        <FontAwesomeIcon icon={faHouseSignal} />
-                                    </button>
-                                </Link>
-                            </Tippy>
+                            {renderNavIcon()}
                             <Tippy content="Thông báo" placement="bottom" animation="shift-away" duration={[150, 0]}>
                                 <button className={cx('action-btn')}>
                                     <FontAwesomeIcon icon={faBell} />
@@ -148,7 +175,7 @@ function Header() {
                         <Menu items={userMenu}>
                             <Image
                                 className={cx('user-avatar')}
-                                src="https://gocbeyeu.com/wp-content/uploads/2021/09/tranh-to-mau-songoku-2.webp"
+                                src={images.noUser}
                                 alt="Tang Ho Trung Nam"
                                 fallBack={images.noUser}
                             ></Image>

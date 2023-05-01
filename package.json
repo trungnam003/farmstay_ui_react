@@ -46,7 +46,7 @@
     "sass": "^1.58.3"
   },
   "scripts": {
-    "start": "react-app-rewired start",
+    "start": "serve -s build --listen 8080",
     "build": "react-app-rewired build",
     "test": "react-app-rewired test",
     "eject": "react-scripts eject",

@@ -1,1 +1,1 @@
-web: serve -s build --listen 8080
+web: yarn start

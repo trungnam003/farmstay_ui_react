@@ -197,7 +197,18 @@ function VisualizationGroup({ field, className, ...props }) {
             </div>
             <div className={cx('body')}>
                 {showChart ? (
-                    <LineChart data={data} XAxisKey={'timestamp'} lineKey={'value'} danger={danger} />
+                    <LineChart
+                        data={data}
+                        XAxisKey={'timestamp'}
+                        lineKey={'value'}
+                        danger={danger}
+                        dangerMax={field.danger_max}
+                        dangerMaxLabel={`${field.danger_max}` + (field.unit_symbol ? `(${field.unit_symbol})` : '')}
+                        dangerMin={field.danger_min}
+                        dangerMinLabel={`${field.danger_min}` + (field.unit_symbol ? `(${field.unit_symbol})` : '')}
+                        showDangerLine={field.visualization === 'chart'}
+                        name={`${field.alias_field_name}` + (field.unit_symbol ? `(${field.unit_symbol})` : '')}
+                    />
                 ) : (
                     renderVisualization(field.visualization)
                 )}

@@ -115,7 +115,9 @@ function FormLogin() {
                                 </Col>
                                 <Col md={6}>
                                     <Link
-                                        to="/forgot-password"
+                                        to={[config.routes.user.path, config.routes.user.child.forgotPassword].join(
+                                            '/',
+                                        )}
                                         className={cx('text-primary', 'd-flex', 'justify-content-end')}
                                     >
                                         Quên mật khẩu?

@@ -5,6 +5,7 @@ import { EmptyLayout, DefaultLayout } from '~/layouts';
 import ActiveUser from './pages/ActiveUser';
 import FarmstayDashboard from './pages/FarmstayDashboard';
 import UserInfo from './pages/UserInfo';
+import ForgotPassword from './pages/ForgotPassword/ForgotPassword';
 
 function User() {
     return (
@@ -31,6 +32,14 @@ function User() {
                     element={
                         <DefaultLayout>
                             <FarmstayDashboard />
+                        </DefaultLayout>
+                    }
+                />
+                <Route
+                    path={config.routes.user.child.forgotPassword}
+                    element={
+                        <DefaultLayout>
+                            <ForgotPassword />
                         </DefaultLayout>
                     }
                 />

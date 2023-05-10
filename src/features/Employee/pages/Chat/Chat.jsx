@@ -57,6 +57,8 @@ function Chat() {
                     } = err;
                     if (code === 403) {
                         navigate('/');
+                    } else if (code === 401) {
+                        navigate('/auth/login');
                     }
                 });
             chatSocket.open();
@@ -72,7 +74,16 @@ function Chat() {
                     });
                 })
                 .catch((err) => {
-                    console.log(err);
+                    const {
+                        response: {
+                            data: { code },
+                        },
+                    } = err;
+                    if (code === 403) {
+                        navigate('/');
+                    } else if (code === 401) {
+                        navigate('/auth/login');
+                    }
                 });
         }
     }, [token, navigate, user]);

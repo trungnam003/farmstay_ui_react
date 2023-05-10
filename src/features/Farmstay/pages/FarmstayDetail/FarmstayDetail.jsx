@@ -29,9 +29,9 @@ function FarmstayDetail() {
                 });
         }
     }, [token, farmstay_uuid]);
-
+    console.log(farmstay);
     const handleClickRentFarm = (e) => {
-        const returnURL = `http://localhost:3333${config.routes.farmstays.path}/${farmstay_uuid}/status_payment_deposit`;
+        const returnURL = `${config.baseURL}${config.routes.farmstays.path}/${farmstay_uuid}/status_payment_deposit`;
         farmstayApi
             .createPaymentURL({ token, farmstayUUID: farmstay_uuid, returnURL })
             .then((res) => {
@@ -41,7 +41,7 @@ function FarmstayDetail() {
                 console.log(err);
             });
     };
-
+    console.log(farmstay);
     return (
         <div className={cx('wrapper')}>
             {farmstay ? (
@@ -72,8 +72,8 @@ function FarmstayDetail() {
                             <Tab eventKey="infomation" title="Tổng quan">
                                 <Card style={{ width: '100%' }}>
                                     <Card.Body>
-                                        <Card.Title className="fw-bold">{farmstay.name}</Card.Title>
-                                        <Card.Subtitle className="mb-2 text-danger">
+                                        <Card.Title className="fw-bold fs-2">{farmstay.name}</Card.Title>
+                                        <Card.Subtitle className="mb-2 text-danger fs-5">
                                             Giá thuê:{' '}
                                             {farmstay.rent_cost_per_day.toLocaleString('it-IT', {
                                                 style: 'currency',
@@ -81,7 +81,9 @@ function FarmstayDetail() {
                                             })}
                                             /ngày
                                         </Card.Subtitle>
+                                        <Card.Text className="fs-5">{'Mô tả: ' + farmstay.description}</Card.Text>
                                         <Card.Text>
+                                            Địa chỉ:{' '}
                                             {farmstay.address.ward.full_name +
                                                 ', ' +
                                                 farmstay.address.district.full_name +
@@ -96,7 +98,13 @@ function FarmstayDetail() {
                                                 Mở bản đồ
                                             </Card.Link>
                                         </Card.Text>
-                                        <Card.Text>{'Mô tả: ' + farmstay.description}</Card.Text>
+                                        <div
+                                            className="d-flex justify-content-center"
+                                            dangerouslySetInnerHTML={{
+                                                __html: farmstay.address?.embedded_link,
+                                            }}
+                                        ></div>
+
                                         <div className="d-flex flex-row-reverse">
                                             <Button variant="success" className="px-4" onClick={handleClickRentFarm}>
                                                 Thuê ngay

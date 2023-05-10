@@ -1,7 +1,13 @@
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 
-function Progressbar({ value, minValue, maxValue, text, className, styles, ...props }) {
+function Progressbar({ value, minValue, maxValue, text, className, danger = false, ...props }) {
+    const normalStyle = {};
+    const dangerStyle = {
+        textColor: 'red',
+        pathColor: 'red',
+        trailColor: 'gold',
+    };
     return (
         <CircularProgressbar
             value={value}
@@ -9,9 +15,7 @@ function Progressbar({ value, minValue, maxValue, text, className, styles, ...pr
             maxValue={maxValue || 100}
             text={`${text}`}
             className={className}
-            styles={buildStyles({
-                ...styles,
-            })}
+            styles={buildStyles(danger ? dangerStyle : normalStyle)}
             {...props}
         />
     );

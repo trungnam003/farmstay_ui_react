@@ -24,12 +24,12 @@ function VisualizationGroup({ field, className, ...props }) {
     const auth = useSelector((state) => state.auth);
     const [showChart, setShowChart] = useState(false);
     const socket = useContext(SocketFarmstayContext);
-
+    const [danger, setDanger] = useState(false);
     useEffect(() => {
         const handleSocketData = (res) => {
-            const { value, danger } = res;
+            const { value, danger: isDanger } = res;
             Object.assign(res, { value: Math.floor(value) });
-            if (danger) {
+            if (isDanger) {
                 toast.error(`Cảnh báo: ${field.alias_field_name} ${value}${field.unit_symbol}`, {
                     position: 'top-right',
                     autoClose: 5000,
@@ -40,6 +40,9 @@ function VisualizationGroup({ field, className, ...props }) {
                     progress: undefined,
                     theme: 'light',
                 });
+                setDanger(true);
+            } else {
+                setDanger(false);
             }
 
             setData((prev) => {
@@ -59,8 +62,24 @@ function VisualizationGroup({ field, className, ...props }) {
                     setData((prev) => {
                         return [...res.data];
                     });
+
                     if (Array.isArray(res.data) && res.data.length > 0) {
                         setChecked(!!res.data[res.data.length - 1].value);
+                        const data = res.data[res.data.length - 1].value;
+
+                        if (data <= field.danger_min || data >= field.danger_max) {
+                            setDanger(true);
+                            toast.error(`Cảnh báo: ${field.alias_field_name} ${data}${field.unit_symbol}`, {
+                                position: 'top-right',
+                                autoClose: 5000,
+                                hideProgressBar: false,
+                                closeOnClick: true,
+                                pauseOnHover: true,
+                                draggable: true,
+                                progress: undefined,
+                                theme: 'light',
+                            });
+                        }
                     }
                 })
                 .catch((err) => {
@@ -71,7 +90,16 @@ function VisualizationGroup({ field, className, ...props }) {
         return () => {
             socket.off(field.field_name, handleSocketData);
         };
-    }, [field.field_name, socket, auth.token, field.alias_field_name, field.unit_symbol]);
+    }, [
+        field.field_name,
+        socket,
+        auth.token,
+        field.alias_field_name,
+        field.unit_symbol,
+        field.danger_min,
+        field.danger_max,
+    ]);
+
     const handleChange = (nextChecked) => {
         setChecked(nextChecked);
         if (field.visualization === BUTTON) {
@@ -101,6 +129,7 @@ function VisualizationGroup({ field, className, ...props }) {
                         minValue={field.min}
                         maxValue={field.max}
                         text={`${getLatestData()}${field.unit_symbol}`}
+                        danger={danger}
                     />
                 </div>
             );
@@ -168,7 +197,7 @@ function VisualizationGroup({ field, className, ...props }) {
             </div>
             <div className={cx('body')}>
                 {showChart ? (
-                    <LineChart data={data} XAxisKey={'timestamp'} lineKey={'value'} />
+                    <LineChart data={data} XAxisKey={'timestamp'} lineKey={'value'} danger={danger} />
                 ) : (
                     renderVisualization(field.visualization)
                 )}

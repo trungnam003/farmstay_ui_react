@@ -26,6 +26,7 @@ const routes = {
         child: {
             active: 'active',
             dashboard: 'farmstay/dashboard',
+            forgotPassword: 'forgot-password',
         },
     },
     employee: {

@@ -13,6 +13,18 @@ const userApi = {
         const url = '/user/active';
         return axiosClient.put(url, { otp }, { headers: { 'authenticate-jwt': token } });
     },
+    sendEmailForgotPassword: ({ email }) => {
+        const url = '/user/forgot-password';
+        return axiosClient.post(url, { email });
+    },
+    changeForgotPassword: ({ email, otp, new_password }) => {
+        const url = '/user/forgot-password';
+        return axiosClient.put(url, { email, otp, new_password });
+    },
+    verifyOtp: ({ otp, email }) => {
+        const url = '/user/otp';
+        return axiosClient.post(url, { email, otp });
+    },
     getFieldEquipments: ({ token }) => {
         const url = '/customer/farmstay/equipments';
         return axiosClient.get(url, { headers: { 'authenticate-jwt': token } });

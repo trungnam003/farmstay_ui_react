@@ -57,7 +57,7 @@ function LineChart({
             <XAxis dataKey={XAxisKey} hide />
             <YAxis />
             <Tooltip cursor={{ strokeWidth: 1 }} />
-            <Legend />
+            <Legend layout="horizontal" verticalAlign="top" align="right" wrapperStyle={{ top: -5, right: 10 }} />
 
             {showDangerLine && (
                 <ReferenceLine y={dangerMax} label={dangerMaxLabel} stroke="#FF8A8A" strokeWidth={0.8} />

@@ -28,7 +28,7 @@ function VisualizationGroup({ field, className, ...props }) {
     useEffect(() => {
         const handleSocketData = (res) => {
             const { value, danger: isDanger } = res;
-            Object.assign(res, { value: Math.floor(value) });
+            Object.assign(res, { value: value });
             if (isDanger) {
                 toast.error(`Cảnh báo: ${field.alias_field_name} ${value}${field.unit_symbol}`, {
                     position: 'top-right',

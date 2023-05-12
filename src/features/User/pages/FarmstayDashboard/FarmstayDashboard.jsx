@@ -1,6 +1,6 @@
 import classNames from 'classnames/bind';
 
-import { Col, Row, Spinner } from 'react-bootstrap';
+import { Col, ListGroup, Row, Spinner } from 'react-bootstrap';
 
 import styles from './FarmstayDashboard.module.scss';
 import { useEffect, useState } from 'react';
@@ -38,6 +38,7 @@ function FarmstayDashboard() {
     const [loading, setLoading] = useState(true);
     const [isRented, setIsRented] = useState(false);
     const { token } = auth;
+    const [farmstay, setFarmstay] = useState(null);
     const navigate = useNavigate();
     // useEffect(() => {
     //     socket.on('connect_error', (err) => {
@@ -47,6 +48,26 @@ function FarmstayDashboard() {
 
     useEffect(() => {
         if (token) {
+            userApi
+                .getFarmstayOwn({ token })
+                .then((res) => {
+                    console.log(res);
+                    setFarmstay(res.data);
+                })
+                .catch((err) => {
+                    if (err?.response?.data) {
+                        const {
+                            response: { data },
+                        } = err;
+                        if (data?.code === 403) {
+                            setLoading(false);
+                            setIsRented(false);
+                        } else if (data?.code === 401) {
+                            navigate('/auth/login');
+                        }
+                    }
+                });
+
             userApi
                 .getFieldEquipments({ token })
                 .then((res) => {
@@ -94,6 +115,37 @@ function FarmstayDashboard() {
                     <h2 className={cx('dashboard-title')}>Dashboard Farmstay</h2>
                     <div className={cx('container')}>
                         <Row>
+                            <Col xl={12}>
+                                <div className={cx('wrapper-farmstay')}>
+                                    {farmstay && (
+                                        <ListGroup>
+                                            <ListGroup.Item>
+                                                <h5>
+                                                    Tên farmstay: <span className="fw-bold">{farmstay.name}</span>
+                                                </h5>
+                                            </ListGroup.Item>
+                                            <ListGroup.Item>
+                                                <h5>
+                                                    Địa chỉ:{' '}
+                                                    <span className="fw-bold">
+                                                        {farmstay.address.ward.full_name +
+                                                            ', ' +
+                                                            farmstay.address.district.full_name +
+                                                            ', ' +
+                                                            farmstay.address.province.full_name}
+                                                    </span>
+                                                </h5>
+                                            </ListGroup.Item>
+                                            <ListGroup.Item>
+                                                <h5>
+                                                    Ngày thuê:{' '}
+                                                    <span className="fw-bold">{farmstay.rental_info.rented_at}</span>
+                                                </h5>
+                                            </ListGroup.Item>
+                                        </ListGroup>
+                                    )}
+                                </div>
+                            </Col>
                             <Col xl={12}>
                                 {Object.keys(areas).map((area) => {
                                     return <AreaVisualization key={area} name={area} fields={areas[area]} />;

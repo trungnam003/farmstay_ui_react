@@ -25,6 +25,10 @@ const userApi = {
         const url = '/user/otp';
         return axiosClient.post(url, { email, otp });
     },
+    getFarmstayOwn: ({ token }) => {
+        const url = '/customer/farmstay';
+        return axiosClient.get(url, { headers: { 'authenticate-jwt': token } });
+    },
     getFieldEquipments: ({ token }) => {
         const url = '/customer/farmstay/equipments';
         return axiosClient.get(url, { headers: { 'authenticate-jwt': token } });

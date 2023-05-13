@@ -1,6 +1,6 @@
 import classNames from 'classnames/bind';
 import styles from './Chat.module.scss';
-import { Col, Container, Row, Stack } from 'react-bootstrap';
+import { Button, Col, Container, Row, Stack } from 'react-bootstrap';
 import Conversation from '../../components/Conversation';
 import Message from '../../components/Message';
 import { useSelector } from 'react-redux';
@@ -11,6 +11,12 @@ import { socket as chatSocket } from '~/context/socketChatContext';
 import HeaderCurrentConversation from '../../components/HeaderCurrentConversation/HeaderCurrentConversation';
 import { useNavigate } from 'react-router-dom';
 import EmployeeItem from '../../components/EmployeeItem/EmployeeItem';
+// import component 👇
+import Drawer from 'react-modern-drawer';
+//import styles 👇
+import 'react-modern-drawer/dist/index.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUserGroup } from '@fortawesome/free-solid-svg-icons';
 
 const cx = classNames.bind(styles);
 
@@ -22,6 +28,11 @@ function Chat() {
     const [currentConversation, setCurrentConversation] = useState(null);
     const [messages, setMessages] = useState([]);
     const [employees, setEmployees] = useState([]);
+
+    const [isOpen, setIsOpen] = useState(false);
+    const toggleDrawer = () => {
+        setIsOpen((prevState) => !prevState);
+    };
 
     const navigate = useNavigate();
 
@@ -239,7 +250,7 @@ function Chat() {
     return (
         <Container fluid className={cx('wrapper')}>
             <Row>
-                <Col xs={3} className={cx('member')}>
+                <Col md={5} lg={4} xl={3} className={cx('member')}>
                     <div className={cx('member-header')}>
                         <h3 className="fw-bold">Chat Nội Bộ</h3>
                     </div>
@@ -262,7 +273,7 @@ function Chat() {
                         </Stack>
                     </div>
                 </Col>
-                <Col xs={7} className="g-0">
+                <Col md={6} lg={7} xl={8} className="g-0">
                     <div className={cx('messages-wrapper')}>
                         <div className={cx('messages-header')}>
                             <HeaderCurrentConversation conversation={currentConversation} />
@@ -298,37 +309,42 @@ function Chat() {
                         </div>
                     </div>
                 </Col>
-                <Col xs={2} className={cx('member')}>
-                    <div className={cx('member-header')}>
-                        <h3 className="fw-bold">Nhân viên</h3>
-                    </div>
+                <Col md={1} lg={1} xl={1} className={cx('member')}>
                     <div className={cx('member-body')}>
-                        <Stack>
-                            {employees.map((employee) => {
-                                return (
-                                    <div
-                                        key={employee.id}
-                                        onClick={() => {
-                                            const memberSend = {
-                                                id: user.employee.id,
-                                                fullname: user.employee.fullname,
-                                            };
-                                            const memberReceive = { id: employee.id, fullname: employee.fullname };
+                        <Button variant="success" className="w-100 mt-4" onClick={toggleDrawer}>
+                            <FontAwesomeIcon icon={faUserGroup} />
+                        </Button>
+                        <Drawer open={isOpen} onClose={toggleDrawer} direction="right" className={cx('drawer')}>
+                            <div className={cx('member-header')}>
+                                <h3 className="fw-bold">Danh sách nhân viên</h3>
+                            </div>
+                            <Stack>
+                                {employees.map((employee) => {
+                                    return (
+                                        <div
+                                            key={employee.id}
+                                            onClick={() => {
+                                                const memberSend = {
+                                                    id: user.employee.id,
+                                                    fullname: user.employee.fullname,
+                                                };
+                                                const memberReceive = { id: employee.id, fullname: employee.fullname };
 
-                                            const newConversation = { is_new_conversation: true };
-                                            newConversation['name'] = employee.fullname;
-                                            newConversation['members'] = [memberSend, memberReceive];
-                                            // console.log(newConversation);
-                                            // console.log(currentConversation);
-
-                                            setCurrentConversation(newConversation);
-                                        }}
-                                    >
-                                        <EmployeeItem employee={employee} />
-                                    </div>
-                                );
-                            })}
-                        </Stack>
+                                                const newConversation = { is_new_conversation: true };
+                                                newConversation['name'] = employee.fullname;
+                                                newConversation['members'] = [memberSend, memberReceive];
+                                                // console.log(newConversation);
+                                                // console.log(currentConversation);
+                                                setIsOpen(false);
+                                                setCurrentConversation(newConversation);
+                                            }}
+                                        >
+                                            <EmployeeItem employee={employee} />
+                                        </div>
+                                    );
+                                })}
+                            </Stack>
+                        </Drawer>
                     </div>
                 </Col>
             </Row>

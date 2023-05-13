@@ -59,3 +59,10 @@
     width: 100%;
     background: transparent;
 }
+
+.drawer {
+    margin-top: var(--default-layout-header-height);
+    height: calc(100vh - var(--default-layout-header-height));
+    background: #f2fffa !important;
+    width: 333px !important;
+}

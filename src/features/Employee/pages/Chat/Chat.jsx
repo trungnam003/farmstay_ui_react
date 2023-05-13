@@ -120,7 +120,7 @@ function Chat() {
             };
         }
     }, [token, user, currentConversation]);
-
+    // console.log(messages);
     useEffect(() => {
         const funcNewConversation = (res) => {
             chatSocket.emit('join_conversation', { conversation_id: res._id });
@@ -268,9 +268,11 @@ function Chat() {
                             <HeaderCurrentConversation conversation={currentConversation} />
                         </div>
                         <div ref={scrollRef} className={cx('messages-body')}>
-                            {messages.length > 0 ? (
+                            {messages.length > 0 && user && user.employee ? (
                                 messages.map((message) => {
                                     const { employee } = user;
+                                    // console.log('message:', message);
+                                    // console.log('employee:', employee);
                                     return (
                                         <Message
                                             message={message}

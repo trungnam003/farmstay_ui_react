@@ -25,7 +25,7 @@ const user = createSlice({
             }
         },
         resetUser: (state, action) => {
-            Object.assign(state, userInitialState);
+            Object.assign(state, null);
         },
     },
 });

@@ -5,7 +5,7 @@ import { Col, ListGroup, Row, Spinner } from 'react-bootstrap';
 import styles from './FarmstayDashboard.module.scss';
 import { useEffect, useState } from 'react';
 import AreaVisualization from '../../components/AreaVisualization/AreaVisualization';
-import { SocketFarmstayContext, socket } from '~/context/socketFarmstayContext';
+import { SocketFarmstayContext } from '~/context/socketFarmstayContext';
 import { useSelector } from 'react-redux';
 import { userApi } from '~/api';
 import { ToastContainer } from 'react-toastify';
@@ -32,7 +32,7 @@ const cx = classNames.bind(styles);
 //     );
 // }
 
-function FarmstayDashboard() {
+function FarmstayDashboard({ socket }) {
     const [areas, setAreas] = useState({});
     const auth = useSelector((state) => state.auth);
     const [loading, setLoading] = useState(true);
@@ -88,6 +88,7 @@ function FarmstayDashboard() {
                         }
                     });
                     socket.open();
+
                     setAreas(areas);
                     setIsRented(true);
                 })
@@ -105,7 +106,10 @@ function FarmstayDashboard() {
                     }
                 });
         }
-    }, [token, navigate]);
+        return () => {
+            socket.close();
+        };
+    }, [token, navigate, socket]);
 
     const render = () => {
         return isRented ? (

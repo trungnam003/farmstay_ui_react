@@ -6,6 +6,7 @@ import ActiveUser from './pages/ActiveUser';
 import FarmstayDashboard from './pages/FarmstayDashboard';
 import UserInfo from './pages/UserInfo';
 import ForgotPassword from './pages/ForgotPassword/ForgotPassword';
+import { socket } from '~/context/socketFarmstayContext';
 
 function User() {
     return (
@@ -31,7 +32,7 @@ function User() {
                     path={config.routes.user.child.dashboard}
                     element={
                         <DefaultLayout>
-                            <FarmstayDashboard />
+                            <FarmstayDashboard socket={socket()} />
                         </DefaultLayout>
                     }
                 />

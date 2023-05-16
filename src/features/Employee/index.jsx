@@ -4,7 +4,7 @@ import config from '~/config';
 import { DefaultLayout, DefaultLayoutFull } from '~/layouts';
 import Chat from './pages/Chat';
 import Menu from './pages/Menu';
-
+import { socket as chatSocket } from '~/context/socketChatContext';
 function Employee() {
     return (
         <>
@@ -21,7 +21,7 @@ function Employee() {
                     path={config.routes.employee.child.chat}
                     element={
                         <DefaultLayoutFull>
-                            <Chat />
+                            <Chat chatSocket={chatSocket()} />
                         </DefaultLayoutFull>
                     }
                 />

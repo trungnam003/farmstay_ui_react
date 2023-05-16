@@ -7,7 +7,7 @@ import { useSelector } from 'react-redux';
 import { useEffect, useRef, useState } from 'react';
 import { employeeApi } from '~/api';
 import FormSendMessage from '../../components/FormSendMessage';
-import { socket as chatSocket } from '~/context/socketChatContext';
+
 import HeaderCurrentConversation from '../../components/HeaderCurrentConversation/HeaderCurrentConversation';
 import { useNavigate } from 'react-router-dom';
 import EmployeeItem from '../../components/EmployeeItem/EmployeeItem';
@@ -20,7 +20,7 @@ import { faUserGroup } from '@fortawesome/free-solid-svg-icons';
 
 const cx = classNames.bind(styles);
 
-function Chat() {
+function Chat({ chatSocket }) {
     const auth = useSelector((state) => state.auth);
     const user = useSelector((state) => state.user);
 
@@ -41,7 +41,6 @@ function Chat() {
 
     useEffect(() => {
         const { user_type } = user;
-        // console.log(user);
         if (user_type !== 'employee' && user_type !== null) {
             navigate('/');
         }
@@ -73,7 +72,6 @@ function Chat() {
                     }
                 });
             chatSocket.open();
-
             employeeApi
                 .getAllEmployeesNoConversation({ token })
                 .then((res) => {
@@ -97,7 +95,11 @@ function Chat() {
                     }
                 });
         }
-    }, [token, navigate, user]);
+
+        return () => {
+            chatSocket.close();
+        };
+    }, [token, navigate, user, chatSocket]);
 
     useEffect(() => {
         if (token && user && currentConversation) {
@@ -130,8 +132,8 @@ function Chat() {
                 chatSocket.removeListener('new_message', func);
             };
         }
-    }, [token, user, currentConversation]);
-    // console.log(messages);
+    }, [token, user, currentConversation, chatSocket]);
+
     useEffect(() => {
         const funcNewConversation = (res) => {
             chatSocket.emit('join_conversation', { conversation_id: res._id });
@@ -148,7 +150,7 @@ function Chat() {
         return () => {
             chatSocket.removeListener('new_conversation', funcNewConversation);
         };
-    }, [currentConversation]);
+    }, [currentConversation, chatSocket]);
 
     useEffect(() => {
         if (token && currentConversation) {
